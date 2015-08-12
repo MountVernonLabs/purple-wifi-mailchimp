@@ -18,7 +18,7 @@
     foreach ($venues['data']['venues'] as $venue) {
         echo "Visitors to ".$venue["name"]."... ";
 
-        $visitors = $api->getEndpoint("/venue/".$venue["id"]."/visitors?from=".date("Ymd", time() - 60 * 60 * 24 * 7)."&to=".date("Ymd"));
+        $visitors = $api->getEndpoint("/venue/".$venue["id"]."/visitors?from=".date("Ymd", time() - 60 * 60 * 24 * 30)."&to=".date("Ymd"));
         
         if ($visitors["response_code"] == "200"){
             echo "\n";
@@ -28,8 +28,12 @@
                     $Mailchimp = new Mailchimp( $api_key );
                     $Mailchimp_Lists = new Mailchimp_Lists( $Mailchimp );
                     $merge_vars = array("FNAME"=>$visitor["first_name"],"LNAME"=>$visitor["last_name"],'groupings' => array( array("name"=>$master_group,"groups"=> array($sub_group))));
-                    $subscriber = $Mailchimp_Lists->subscribe( $list_id, array('email' => $visitor["email"]), $merge_vars,'html',$double_optin,TRUE,FALSE);  
-                    echo $subscriber['leid']."\n";
+                    try {
+                        $subscriber = $Mailchimp_Lists->subscribe( $list_id, array('email' => $visitor["email"]), $merge_vars,'html',$double_optin,TRUE,FALSE);  
+                        echo $subscriber['leid']."\n";
+                    } catch( Mailchimp_ValidationError $e ){
+                        echo "bad email, skipping...\n";
+                    }
             }
             echo "\n";
         } else {
