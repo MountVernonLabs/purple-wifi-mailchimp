@@ -28,7 +28,7 @@
                     $Mailchimp = new Mailchimp( $api_key );
                     $Mailchimp_Lists = new Mailchimp_Lists( $Mailchimp );
                     $merge_vars = array("FNAME"=>$visitor["first_name"],"LNAME"=>$visitor["last_name"],'groupings' => array( array("name"=>$master_group,"groups"=> array($sub_group))));
-                    if (strpos($visitor["email"], 'none') === false){
+                    if (strpos($visitor["email"], 'none') === false && strpos($visitor["email"], 'gnail.com'  && strpos($visitor["email"], 'test') === false ){
                         try {
                             $subscriber = $Mailchimp_Lists->subscribe( $list_id, array('email' => $visitor["email"]), $merge_vars,'html',$double_optin,TRUE,FALSE);  
                             echo $subscriber['leid']."\n";
