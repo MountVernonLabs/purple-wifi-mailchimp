@@ -28,12 +28,17 @@
                     $Mailchimp = new Mailchimp( $api_key );
                     $Mailchimp_Lists = new Mailchimp_Lists( $Mailchimp );
                     $merge_vars = array("FNAME"=>$visitor["first_name"],"LNAME"=>$visitor["last_name"],'groupings' => array( array("name"=>$master_group,"groups"=> array($sub_group))));
-                    try {
-                        $subscriber = $Mailchimp_Lists->subscribe( $list_id, array('email' => $visitor["email"]), $merge_vars,'html',$double_optin,TRUE,FALSE);  
-                        echo $subscriber['leid']."\n";
-                    } catch( Mailchimp_ValidationError $e ){
-                        echo "bad email, skipping...\n";
+                    if (strpos($visitor["email"], 'none') === false){
+                        try {
+                            $subscriber = $Mailchimp_Lists->subscribe( $list_id, array('email' => $visitor["email"]), $merge_vars,'html',$double_optin,TRUE,FALSE);  
+                            echo $subscriber['leid']."\n";
+                        } catch( Mailchimp_ValidationError $e ){
+                            echo "bad email, skipping...\n";
+                        }
+                    } else {
+                         echo "bad email, skipping...\n";
                     }
+                    
             }
             echo "\n";
         } else {
