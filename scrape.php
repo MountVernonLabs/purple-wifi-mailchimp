@@ -5,8 +5,9 @@
 
     // Include libraries
     require_once('inc/purplewifi.class.php');
-    require_once('inc/Mailchimp.php');
+    include('inc/mailchimp/MailChimp.php');
 
+    use \DrewM\MailChimp\MailChimp;
 
     // Now create new Purple WiFi api instance.
 
@@ -24,19 +25,19 @@
             foreach ($visitors['data']['visitors'] as $visitor){
                 echo $visitor["email"]."... ";
                 // MailChimp Subscribe
-                $Mailchimp = new Mailchimp( $api_key );
-                $Mailchimp_Lists = new Mailchimp_Lists( $Mailchimp );
-                $merge_vars = array("FNAME"=>$visitor["first_name"],"LNAME"=>$visitor["last_name"],'groupings' => array( array("name"=>$master_group,"groups"=> array($sub_group))));
-                if (strpos($visitor["email"], 'none') === false && strpos($visitor["email"], 'gnail.com') === false && strpos($visitor["email"], 'gmail.net') === false && strpos($visitor["email"], 'test') === false ){
-                    $subscriber = $Mailchimp_Lists->subscribe( $list_id, array('email' => $visitor["email"]), $merge_vars,'html',$double_optin,TRUE,FALSE);
-                    if ($subscriber['leid'] != ""){
-                      echo $subscriber['leid']."\n";
-                    } else {
-                      echo "Skipping email...\n";
-                    }
-                }
-            }
+
+                $MailChimp = new MailChimp($api_key);
+                $result = $MailChimp->post("lists/$list_id/members", [
+                                'email_address' => $visitor["email"],
+                                'status'        => 'subscribed',
+                            ]);
+                $result = $MailChimp->post("lists/$list_id/segments/$segment_id/members", [
+                                'id' => $MailChimp->subscriberHash($visitor["email"]),
+                                'email_address' => $visitor["email"],
+                                'status'        => 'subscribed'
+                            ]);
             echo "\n";
+            }
         } else {
             echo "No Visitors\n";
         }

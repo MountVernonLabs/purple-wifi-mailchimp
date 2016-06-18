@@ -10,9 +10,7 @@
 
     $api_key      = 'YOUR_MAILCHIMP_API_KEY';
     $list_id      = 'YOUR_MAILCHIMP_LIST_ID';
-    $double_optin = TRUE; // Do you want MailChimp to require a double-opt-in?  TRUE/FALSE
-    $master_group = 'Source'; // Group you want to assign contacts to
-    $sub_group    = 'WiFi Users'; // Sub group within the group above that you want to assign people to
+    $segment_id   = '481'; // Segment ID you want to assign it to
 
     $days         = 1; // Days to retrieve
 
